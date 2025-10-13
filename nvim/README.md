@@ -44,9 +44,11 @@ This configuration supports multiple programming languages including C/C++, Go, 
 
 ## Requirements
 
-Before installing this configuration, make sure you have the following installed on your Ubuntu system:
+Before installing this configuration, make sure you have the following installed on your system.
 
-### Essential Requirements
+### For Linux (Ubuntu/Debian)
+
+#### Essential Requirements
 
 1. **Neovim** (>= 0.9.0)
    ```bash
@@ -95,16 +97,135 @@ Before installing this configuration, make sure you have the following installed
    sudo apt install python3 python3-pip python3-venv
    ```
 
+### For macOS
+
+#### Essential Requirements
+
+1. **Neovim** (>= 0.9.0)
+   ```bash
+   brew install neovim
+   ```
+
+2. **Git** (usually pre-installed)
+   ```bash
+   brew install git
+   ```
+
+3. **A Nerd Font**
+   - Download and install from [Nerd Fonts](https://www.nerdfonts.com/)
+   - Or use Homebrew:
+   ```bash
+   brew tap homebrew/cask-fonts
+   brew install --cask font-iosevka-nerd-font
+   ```
+   - Configure your terminal to use the Nerd Font
+
+4. **Node.js** (>= 14.x)
+   ```bash
+   brew install node
+   ```
+
+5. **Python 3**
+   ```bash
+   brew install python3
+   ```
+
+### For Windows
+
+#### Essential Requirements
+
+1. **Neovim** (>= 0.9.0)
+   - Download from [Neovim Releases](https://github.com/neovim/neovim/releases)
+   - Or use Chocolatey:
+   ```powershell
+   choco install neovim
+   ```
+   - Or use Scoop:
+   ```powershell
+   scoop install neovim
+   ```
+   - Or use Winget:
+   ```powershell
+   winget install Neovim.Neovim
+   ```
+
+2. **Git**
+   - Download from [Git for Windows](https://gitforwindows.org/)
+   - Or use Chocolatey:
+   ```powershell
+   choco install git
+   ```
+   - Or use Winget:
+   ```powershell
+   winget install Git.Git
+   ```
+
+3. **A Nerd Font**
+   - Download from [Nerd Fonts](https://www.nerdfonts.com/)
+   - Extract the font files
+   - Right-click on `.ttf` files and select "Install"
+   - Or install via Scoop:
+   ```powershell
+   scoop bucket add nerd-fonts
+   scoop install Iosevka-NF
+   ```
+   - Configure your terminal (Windows Terminal, PowerShell, etc.) to use the Nerd Font
+
+4. **Node.js** (>= 14.x)
+   - Download from [nodejs.org](https://nodejs.org/)
+   - Or use Chocolatey:
+   ```powershell
+   choco install nodejs
+   ```
+   - Or use Winget:
+   ```powershell
+   winget install OpenJS.NodeJS
+   ```
+
+5. **Python 3**
+   - Download from [python.org](https://www.python.org/downloads/)
+   - Or use Chocolatey:
+   ```powershell
+   choco install python
+   ```
+   - Or use Winget:
+   ```powershell
+   winget install Python.Python.3.11
+   ```
+
+6. **C/C++ Compiler** (for building native plugins)
+   - Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+   - Or use Chocolatey:
+   ```powershell
+   choco install visualstudio2022buildtools
+   ```
+
 ### Language-Specific Requirements
 
 Depending on which languages you plan to use, install the following:
 
 #### For C/C++ Development
+
+**Linux:**
 ```bash
 sudo apt install build-essential clang clangd
 ```
 
+**macOS:**
+```bash
+brew install llvm
+```
+
+**Windows:**
+- Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022) with C++ workload
+- Or use Chocolatey:
+```powershell
+choco install llvm
+```
+
 #### For Go Development
+
+**Linux:**
 ```bash
 wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go
@@ -113,13 +234,40 @@ echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
+**macOS:**
+```bash
+brew install go
+```
+
+**Windows:**
+- Download from [go.dev](https://go.dev/dl/)
+- Or use Chocolatey:
+```powershell
+choco install golang
+```
+- Or use Winget:
+```powershell
+winget install GoLang.Go
+```
+
 #### For Python Development
+
+**Linux:**
 ```bash
 sudo apt install python3.8 python3-pip
 ```
 
+**macOS:**
+```bash
+brew install python@3.11
+```
+
+**Windows:**
+Already installed if you followed the essential requirements above.
+
 ### Optional but Recommended
 
+**Linux:**
 ```bash
 # ripgrep - For faster grep searching in Telescope
 sudo apt install ripgrep
@@ -134,12 +282,40 @@ sudo apt install build-essential
 sudo apt install xclip
 ```
 
+**macOS:**
+```bash
+# ripgrep - For faster grep searching in Telescope
+brew install ripgrep
+
+# fd - For faster file finding in Telescope
+brew install fd
+
+# make - Usually pre-installed with Xcode Command Line Tools
+xcode-select --install
+```
+
+**Windows:**
+```powershell
+# ripgrep - For faster grep searching in Telescope
+choco install ripgrep
+# Or: winget install BurntSushi.ripgrep.MSVC
+
+# fd - For faster file finding in Telescope
+choco install fd
+# Or: scoop install fd
+
+# make - For building telescope-fzf-native
+choco install make
+# Or use Visual Studio Build Tools (already installed if you followed C/C++ setup)
+```
+
 ## Installation
 
 ### Step 1: Backup Existing Configuration
 
 If you have an existing Neovim configuration, back it up first:
 
+**Linux/macOS:**
 ```bash
 mv ~/.config/nvim ~/.config/nvim.backup
 mv ~/.local/share/nvim ~/.local/share/nvim.backup
@@ -147,16 +323,37 @@ mv ~/.local/state/nvim ~/.local/state/nvim.backup
 mv ~/.cache/nvim ~/.cache/nvim.backup
 ```
 
+**Windows (PowerShell):**
+```powershell
+# Backup config
+Move-Item $env:LOCALAPPDATA\nvim $env:LOCALAPPDATA\nvim.backup -ErrorAction SilentlyContinue
+# Backup data
+Move-Item $env:LOCALAPPDATA\nvim-data $env:LOCALAPPDATA\nvim-data.backup -ErrorAction SilentlyContinue
+```
+
 ### Step 2: Clone This Configuration
 
+**Linux/macOS:**
 ```bash
-git clone https://github.com/yourusername/shynneri-nvim.git ~/.config/nvim
+git clone https://github.com/shynneri-source/shynneri_nvim.git ~/.config/nvim
+```
+
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/shynneri-source/shynneri_nvim.git $env:LOCALAPPDATA\nvim
 ```
 
 ### Step 3: Install Plugins
 
 1. Open Neovim:
+   
+   **Linux/macOS:**
    ```bash
+   nvim
+   ```
+   
+   **Windows:**
+   ```powershell
    nvim
    ```
 

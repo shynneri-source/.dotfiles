@@ -65,7 +65,7 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/$USER/.oh-m
 ### Installation
 ```bash
 # Clone this repository
-git clone https://github.com/<your-username>/dotfiles.git /home/$USER/dotfiles
+git clone https://github.com/shynneri-source/.dotfiles.git /home/$USER/dotfiles
 cd /home/$USER/dotfiles
 
 # Create symbolic links
