@@ -21,3 +21,4 @@ vim.opt.sidescrolloff = 8
 vim.opt.mouse = 'a'
 vim.opt.clipboard = 'unnamedplus'
 vim.opt.completeopt = 'menuone,noselect'
+vim.opt.hidden = true  -- Keep buffers loaded when switching

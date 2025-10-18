@@ -16,6 +16,24 @@ return {
     config = function()
       require("mini.files").setup({
         -- Configuration options for mini.files
+        mappings = {
+          close       = 'q',
+          go_in       = 'l',
+          go_in_plus  = 'L',
+          go_out      = 'h',
+          go_out_plus = 'H',
+          reset       = '<BS>',
+          reveal_cwd  = '@',
+          show_help   = 'g?',
+          synchronize = 'S',  -- Changed to S for save/sync
+          trim_left   = '<',
+          trim_right  = '>',
+        },
+        windows = {
+          preview = true,
+          width_focus = 30,
+          width_preview = 30,
+        },
       })
       -- Keymap to open mini.files
       vim.keymap.set("n", "<leader>e", function()
