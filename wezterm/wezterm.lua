@@ -1,13 +1,4 @@
 local wezterm = require 'wezterm'
-local mux = wezterm.mux
-
-wezterm.on('gui-attached', function(domain)
-  for _, window in ipairs(mux.all_windows()) do
-    if window:get_workspace() == mux.get_active_workspace() then
-      window:gui_window():toggle_fullscreen() 
-    end
-  end
-end)
 
 return {
   font = wezterm.font("Iosevka Nerd Font Mono"),
@@ -67,4 +58,3 @@ return {
 
   adjust_window_size_when_changing_font_size = false,
 }
-
