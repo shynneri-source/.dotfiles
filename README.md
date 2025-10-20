@@ -10,12 +10,12 @@ Modern Neovim configuration powered by lazy.nvim plugin manager.
 - **Structure**: Modular configuration split into core settings, keymaps, and plugins
 - **Location**: `~/.config/nvim/`
 
-### WezTerm (`wezterm/`)
+### Kitty (`kitty/`)
 GPU-accelerated terminal emulator configuration.
-- **Font**: Iosevka Nerd Font Mono (12pt)
-- **Theme**: Gruvbox Dark with 90% opacity
-- **Features**: Auto-fullscreen on startup, minimal UI, custom keybindings
-- **Location**: `~/.config/wezterm/`
+- **Font**: Customizable Nerd Font support
+- **Theme**: Modern themes with transparency support
+- **Features**: Fast, feature-rich, highly configurable
+- **Location**: `~/.config/kitty/`
 
 ### Zsh (`.zshrc`)
 Shell configuration with Oh My Zsh framework.
@@ -55,10 +55,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone https://github.com/zsh-users/zsh-autosuggestions /home/$USER/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/$USER/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
-# Install WezTerm (optional)
-# Visit: https://wezfurlong.org/wezterm/installation.html
+# Install Kitty (optional)
+sudo apt install -y kitty
 
-# Install Iosevka Nerd Font (optional, for WezTerm)
+# Install Nerd Fonts (optional, for Kitty)
 # Visit: https://www.nerdfonts.com/font-downloads
 ```
 
@@ -73,7 +73,7 @@ ln -sf /home/$USER/dotfiles/.zshrc /home/$USER/.zshrc
 ln -sf /home/$USER/dotfiles/.tmux.conf /home/$USER/.tmux.conf
 ln -sf /home/$USER/dotfiles/.gitconfig /home/$USER/.gitconfig
 ln -sf /home/$USER/dotfiles/nvim /home/$USER/.config/nvim
-ln -sf /home/$USER/dotfiles/wezterm /home/$USER/.config/wezterm
+ln -sf /home/$USER/dotfiles/kitty /home/$USER/.config/kitty
 
 # Source the configuration
 source /home/$USER/.zshrc
@@ -124,10 +124,7 @@ Edit `.gitconfig` and add your email:
 ```
 
 ### Change Terminal Theme
-Edit `wezterm/wezterm.lua` and modify:
-```lua
-color_scheme = "Your-Theme-Name"
-```
+Edit `kitty/kitty.conf` and modify the theme settings or include a different theme file.
 
 ### Modify Zsh Theme
 Edit `.zshrc` and change:
@@ -173,8 +170,8 @@ Add to your shell rc: `export TERM=xterm-256color`
 ### Neovim plugins not loading
 Run `:Lazy sync` inside Neovim to sync all plugins
 
-### WezTerm font issues
-Install Nerd Fonts or change font in `wezterm.lua` to any installed font
+### Kitty font issues
+Install Nerd Fonts or change font in `kitty/kitty.conf` to any installed font
 
 ## 📄 License
 
