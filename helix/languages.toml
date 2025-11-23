@@ -1,0 +1,36 @@
+# C/C++
+[[language]]
+name = "c"
+auto-format = true
+language-servers = [ "clangd" ]
+
+[[language]]
+name = "cpp"
+auto-format = true
+language-servers = [ "clangd" ]
+
+# Go
+[[language]]
+name = "go"
+auto-format = true
+formatter = { command = "goimports" }
+language-servers = [ "gopls" ]
+
+# Rust
+[[language]]
+name = "rust"
+auto-format = true
+[language-server.rust-analyzer.config.check]
+command = "clippy"
+
+# Python [[language]]
+name = "python"
+auto-format = true
+language-servers = [ "pyright", "ruff" ]
+
+[language-server.pyright.config.python.analysis]
+typeCheckingMode = "basic"
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]

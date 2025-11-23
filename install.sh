@@ -39,38 +39,19 @@ print_error() {
 
 # Variables
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
-# Function to create backup directory
-create_backup_dir() {
-    if [ ! -d "$BACKUP_DIR" ]; then
-        mkdir -p "$BACKUP_DIR"
-        print_info "Created backup directory: $BACKUP_DIR"
-    fi
-}
-
-# Function to backup and create symlink
-backup_and_link() {
+# Function to copy directory or file
+copy_config() {
     local src="$1"
     local dest="$2"
 
     # Check if destination already exists
     if [ -e "$dest" ] || [ -L "$dest" ]; then
-        # Backup existing file/directory
-        local backup_path="$BACKUP_DIR/$(basename "$dest")"
-        print_warn "File/directory exists: $dest. Backing up to $backup_path"
-
+        print_warn "File/directory exists: $dest. Removing existing file/directory."
         if [ "$DRY_RUN" = false ]; then
-            # Handle if dest is a symlink
-            if [ -L "$dest" ]; then
-                # It's a symlink, just remove it
-                rm "$dest"
-            else
-                # Move the file/directory to backup location
-                mv "$dest" "$backup_path"
-            fi
+            rm -rf "$dest"
         else
-            print_info "[DRY RUN] Would backup: $dest to $backup_path"
+            print_info "[DRY RUN] Would remove: $dest"
         fi
     fi
 
@@ -83,11 +64,15 @@ backup_and_link() {
         print_info "Created directory: $parent_dir"
     fi
 
-    # Create the symlink
+    # Copy the file/directory
     if [ "$DRY_RUN" = false ]; then
-        ln -s "$src" "$dest"
+        if [ -d "$src" ]; then
+            cp -r "$src" "$dest"
+        else
+            cp "$src" "$dest"
+        fi
     fi
-    print_success "Created symlink: $dest -> $src"
+    print_success "Copied: $src -> $dest"
 }
 
 # Function to install packages via apt (for Ubuntu)
@@ -95,7 +80,7 @@ install_packages() {
     print_info "Checking for required packages..."
 
     # List of packages to check for
-    local packages=("git" "nvim" "tmux" "zsh" "kitty")
+    local packages=("git" "nvim" "tmux" "zsh" "kitty" "helix")
     local missing_packages=()
 
     for package in "${packages[@]}"; do
@@ -123,19 +108,11 @@ install_packages() {
     fi
 }
 
-# Function to install git config
-install_gitconfig() {
-    if [ -f "$SCRIPT_DIR/.gitconfig" ]; then
-        backup_and_link "$SCRIPT_DIR/.gitconfig" "$HOME/.gitconfig"
-    else
-        print_warn ".gitconfig not found in source directory"
-    fi
-}
 
 # Function to install tmux config
 install_tmux_conf() {
     if [ -f "$SCRIPT_DIR/.tmux.conf" ]; then
-        backup_and_link "$SCRIPT_DIR/.tmux.conf" "$HOME/.tmux.conf"
+        copy_config "$SCRIPT_DIR/.tmux.conf" "$HOME/.tmux.conf"
     else
         print_warn ".tmux.conf not found in source directory"
     fi
@@ -144,7 +121,7 @@ install_tmux_conf() {
 # Function to install zsh config
 install_zshrc() {
     if [ -f "$SCRIPT_DIR/.zshrc" ]; then
-        backup_and_link "$SCRIPT_DIR/.zshrc" "$HOME/.zshrc"
+        copy_config "$SCRIPT_DIR/.zshrc" "$HOME/.zshrc"
     else
         print_warn ".zshrc not found in source directory"
     fi
@@ -153,7 +130,7 @@ install_zshrc() {
 # Function to install nvim config
 install_nvim() {
     if [ -d "$SCRIPT_DIR/nvim" ]; then
-        backup_and_link "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
+        copy_config "$SCRIPT_DIR/nvim" "$HOME/.config/nvim"
     else
         print_warn "nvim config directory not found in source directory"
     fi
@@ -175,9 +152,9 @@ install_kitty() {
                 fi
             done
 
-            # Link the prepared directory structure
+            # Copy the prepared directory structure
             if [ -n "$(ls -A "$temp_kitty_dir")" ]; then
-                backup_and_link "$temp_kitty_dir" "$HOME/.config/kitty"
+                copy_config "$temp_kitty_dir" "$HOME/.config/kitty"
             else
                 print_warn "No valid kitty config files found to install"
                 rm -rf "$temp_kitty_dir"
@@ -197,26 +174,31 @@ install_kitty() {
     fi
 }
 
+# Function to install helix config
+install_helix() {
+    if [ -d "$SCRIPT_DIR/helix" ]; then
+        copy_config "$SCRIPT_DIR/helix" "$HOME/.config/helix"
+    else
+        print_warn "helix config directory not found in source directory"
+    fi
+}
+
 # Main installation function
 main() {
     print_info "Starting installation of dotfiles..."
-    
-    # Create backup directory
-    create_backup_dir
-    
+
     # Install required packages
     install_packages
-    
+
     # Install individual configs
-    install_gitconfig
     install_tmux_conf
     install_zshrc
     install_nvim
     install_kitty
-    
+    install_helix
+
     print_success "Dotfiles installation completed!"
-    print_info "Backup of old configs is saved in: $BACKUP_DIR"
-    
+
     # Optionally change default shell to zsh
     if [ -f "$SCRIPT_DIR/.zshrc" ]; then
         if [[ "$SHELL" != *"zsh"* ]]; then
