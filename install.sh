@@ -2,6 +2,14 @@
 
 # Dotfiles installer script for Ubuntu
 # This script links the dotfiles from this repository to their correct locations in the home directory.
+#
+# Prerequisites: The following packages must be installed before running this script:
+# - git
+# - nvim (Neovim)
+# - tmux
+# - zsh
+# - helix
+# - dconf (for gnome-terminal profile installation)
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
@@ -75,38 +83,6 @@ copy_config() {
     print_success "Copied: $src -> $dest"
 }
 
-# Function to install packages via apt (for Ubuntu)
-install_packages() {
-    print_info "Checking for required packages..."
-
-    # List of packages to check for
-    local packages=("git" "nvim" "tmux" "zsh" "kitty" "helix")
-    local missing_packages=()
-
-    for package in "${packages[@]}"; do
-        if ! command -v "$package" &> /dev/null; then
-            missing_packages+=("$package")
-        fi
-    done
-
-    if [ ${#missing_packages[@]} -gt 0 ]; then
-        print_warn "The following packages are not installed: ${missing_packages[*]}"
-        if [ "$DRY_RUN" = false ]; then
-            read -p "Would you like to install them? (y/N): " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                sudo apt update
-                sudo apt install -y "${missing_packages[@]}"
-            else
-                print_info "Continuing without installing packages. You may need to install them manually."
-            fi
-        else
-            print_info "[DRY RUN] Would install packages: ${missing_packages[*]}"
-        fi
-    else
-        print_success "All required packages are already installed."
-    fi
-}
 
 
 # Function to install tmux config
@@ -136,43 +112,6 @@ install_nvim() {
     fi
 }
 
-# Function to install kitty config
-install_kitty() {
-    if [ -d "$SCRIPT_DIR/kitty" ]; then
-        if [ "$DRY_RUN" = false ]; then
-            # Create a temporary directory to prepare the correct structure
-            local temp_kitty_dir=$(mktemp -d)
-
-            # Copy contents of kitty directory while excluding the nested kitty directory and backup files
-            for item in "$SCRIPT_DIR/kitty/"*; do
-                item_name=$(basename "$item")
-                # Skip nested kitty directory and backup files
-                if [[ "$item_name" != "kitty" && "$item_name" != "kitty.conf.bak" ]]; then
-                    cp -r "$item" "$temp_kitty_dir/"
-                fi
-            done
-
-            # Copy the prepared directory structure
-            if [ -n "$(ls -A "$temp_kitty_dir")" ]; then
-                copy_config "$temp_kitty_dir" "$HOME/.config/kitty"
-            else
-                print_warn "No valid kitty config files found to install"
-                rm -rf "$temp_kitty_dir"
-            fi
-        else
-            print_info "[DRY RUN] Would install kitty config from $SCRIPT_DIR/kitty to $HOME/.config/kitty"
-            # In dry run, just show what would be copied
-            for item in "$SCRIPT_DIR/kitty/"*; do
-                item_name=$(basename "$item")
-                if [[ "$item_name" != "kitty" && "$item_name" != "kitty.conf.bak" ]]; then
-                    print_info "[DRY RUN] Would copy: $item_name"
-                fi
-            done
-        fi
-    else
-        print_warn "kitty config directory not found in source directory"
-    fi
-}
 
 # Function to install helix config
 install_helix() {
@@ -183,21 +122,58 @@ install_helix() {
     fi
 }
 
+# Function to check for required commands
+check_required_commands() {
+    local required_commands=("git" "nvim" "tmux" "zsh" "helix")
+
+    print_info "Checking for required commands..."
+    local missing_commands=()
+
+    for cmd in "${required_commands[@]}"; do
+        if ! command -v "$cmd" &> /dev/null; then
+            missing_commands+=("$cmd")
+        fi
+    done
+
+    if [ ${#missing_commands[@]} -gt 0 ]; then
+        print_error "The following required commands are not installed: ${missing_commands[*]}"
+        print_error "Please install them before running this script."
+        exit 1
+    else
+        print_success "All required commands are installed."
+    fi
+}
+
 # Main installation function
 main() {
     print_info "Starting installation of dotfiles..."
 
-    # Install required packages
-    install_packages
+    # Check for required commands
+    check_required_commands
 
     # Install individual configs
     install_tmux_conf
     install_zshrc
     install_nvim
-    install_kitty
     install_helix
 
     print_success "Dotfiles installation completed!"
+
+    # Install gnome-terminal profile if the dconf file exists
+    if command -v dconf &> /dev/null; then
+        if [ -f "$SCRIPT_DIR/rose-pine-moon.dconf" ]; then
+            if [ "$DRY_RUN" = false ]; then
+                dconf load /org/gnome/terminal/legacy/profiles:/ < "$SCRIPT_DIR/rose-pine-moon.dconf"
+                print_success "Gnome-terminal rose-pine-moon profile installed"
+            else
+                print_info "[DRY RUN] Would install gnome-terminal rose-pine-moon profile"
+            fi
+        else
+            print_warn "rose-pine-moon.dconf not found in source directory"
+        fi
+    else
+        print_warn "dconf command not found. Skipping gnome-terminal profile installation."
+    fi
 
     # Optionally change default shell to zsh
     if [ -f "$SCRIPT_DIR/.zshrc" ]; then
