@@ -10,12 +10,11 @@ Modern Neovim configuration powered by lazy.nvim plugin manager.
 - **Structure**: Modular configuration split into core settings, keymaps, and plugins
 - **Location**: `~/.config/nvim/`
 
-### Kitty (`kitty/`)
-GPU-accelerated terminal emulator configuration.
-- **Font**: Customizable Nerd Font support
-- **Theme**: Modern themes with transparency support
-- **Features**: Fast, feature-rich, highly configurable
-- **Location**: `~/.config/kitty/`
+### Helix (`helix/`)
+Modern modal text editor configuration.
+- **Configuration**: Custom settings and keymaps in TOML format
+- **Features**: Fast, efficient, and configurable editor
+- **Location**: `~/.config/helix/`
 
 ### Zsh (`.zshrc`)
 Shell configuration with Oh My Zsh framework.
@@ -41,12 +40,31 @@ Comprehensive Git configuration with productivity aliases.
 - **Aliases**: 30+ shortcuts for common operations
 - **Location**: `~/.gitconfig`
 
+### GNOME Terminal (`rose-pine-moon.dconf`)
+- **Theme**: Rose Pine Moon color scheme
+- **Features**: Dark theme with beautiful colors for terminal
+- **Location**: GNOME terminal profiles via dconf
+
 ## 🚀 Quick Install
 
 ### Prerequisites
+The following packages are required for the full configuration:
+- git
+- zsh
+- tmux
+- neovim (nvim)
+- helix
+- dconf (for GNOME terminal profile)
+
+The installation script will check for these packages and give you options if any are missing:
+1. Automatically install missing packages
+2. Skip missing packages and continue (some functionality may not work)
+3. Cancel installation
+
+If running manually:
 ```bash
 # Install required packages
-sudo apt update && sudo apt install -y git zsh tmux neovim curl xclip
+sudo apt update && sudo apt install -y git zsh tmux neovim helix dconf-cli curl xclip
 
 # Install Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -55,10 +73,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone https://github.com/zsh-users/zsh-autosuggestions /home/$USER/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/$USER/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
-# Install Kitty (optional)
-sudo apt install -y kitty
-
-# Install Nerd Fonts (optional, for Kitty)
+# Install Nerd Fonts (optional, for terminal)
 # Visit: https://www.nerdfonts.com/font-downloads
 ```
 
@@ -68,16 +83,18 @@ sudo apt install -y kitty
 git clone https://github.com/shynneri-source/.dotfiles.git /home/$USER/dotfiles
 cd /home/$USER/dotfiles
 
-# Create symbolic links
-ln -sf /home/$USER/dotfiles/.zshrc /home/$USER/.zshrc
-ln -sf /home/$USER/dotfiles/.tmux.conf /home/$USER/.tmux.conf
-ln -sf /home/$USER/dotfiles/.gitconfig /home/$USER/.gitconfig
-ln -sf /home/$USER/dotfiles/nvim /home/$USER/.config/nvim
-ln -sf /home/$USER/dotfiles/kitty /home/$USER/.config/kitty
+# Run the automated installation script
+./install.sh
 
-# Source the configuration
-source /home/$USER/.zshrc
+# Or run in dry-run mode to see what would be done
+./install.sh --dry-run
 ```
+
+The installation script will:
+- Check for required packages and give you options if any are missing
+- Link all configuration files to their correct locations
+- Install GNOME terminal profile if dconf is available
+- Provide hints for additional setup like changing default shell to zsh
 
 ## 📝 Configuration Details
 
@@ -149,6 +166,8 @@ Neovim plugins will auto-update via lazy.nvim checker.
 - **NVM**: Node Version Manager (already integrated in .zshrc)
 - **ripgrep**: Fast grep alternative for code search
 - **fd**: Fast find alternative
+- **Helix**: Modern modal text editor
+- **GNOME Terminal**: With rose-pine-moon theme
 
 ```bash
 # Install fzf
@@ -157,6 +176,11 @@ git clone --depth 1 https://github.com/junegunn/fzf.git /home/$USER/.fzf
 
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Install Helix editor (if not using install.sh)
+curl -fsSL https://github.com/helix-editor/helix/releases/latest/download/helix-*.deb -o helix.deb
+sudo apt install ./helix.deb
+rm helix.deb
 ```
 
 ## 🐛 Troubleshooting
@@ -170,8 +194,11 @@ Add to your shell rc: `export TERM=xterm-256color`
 ### Neovim plugins not loading
 Run `:Lazy sync` inside Neovim to sync all plugins
 
-### Kitty font issues
-Install Nerd Fonts or change font in `kitty/kitty.conf` to any installed font
+### GNOME Terminal theme issues
+The rose-pine-moon theme should be automatically installed if dconf is available. If not, you can manually install it by running:
+```bash
+dconf load /org/gnome/terminal/legacy/profiles:/ < rose-pine-moon.dconf
+```
 
 ## 📄 License
 

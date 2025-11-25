@@ -137,8 +137,58 @@ check_required_commands() {
 
     if [ ${#missing_commands[@]} -gt 0 ]; then
         print_error "The following required commands are not installed: ${missing_commands[*]}"
-        print_error "Please install them before running this script."
-        exit 1
+
+        # Ask user what to do about missing packages
+        echo ""
+        echo "What would you like to do?"
+        echo "1) Install missing packages (${missing_commands[*]})"
+        echo "2) Skip installation of missing packages and continue"
+        echo "3) Cancel installation and exit"
+        echo -n "Enter your choice (1-3): "
+        read -r choice
+
+        case $choice in
+            1)
+                # Install missing packages (Ubuntu/Debian specific)
+                print_info "Installing missing packages: ${missing_commands[*]}"
+                if [ "$DRY_RUN" = false ]; then
+                    sudo apt update
+                    sudo apt install -y "${missing_commands[@]}"
+
+                    # Check again after installation
+                    local still_missing=()
+                    for cmd in "${required_commands[@]}"; do
+                        if ! command -v "$cmd" &> /dev/null; then
+                            still_missing+=("$cmd")
+                        fi
+                    done
+
+                    if [ ${#still_missing[@]} -gt 0 ]; then
+                        print_error "Could not install the following packages: ${still_missing[*]}"
+                        print_error "Please install them manually before running this script."
+                        exit 1
+                    else
+                        print_success "All required commands are now installed."
+                    fi
+                else
+                    print_info "[DRY RUN] Would install: ${missing_commands[*]}"
+                fi
+                ;;
+            2)
+                # Remove missing commands from required list so we can continue
+                print_warn "Continuing without missing packages. Some functionality may not work."
+                # We'll continue with available commands only
+                ;;
+            3)
+                # Cancel installation
+                print_info "Cancelling installation as requested."
+                exit 0
+                ;;
+            *)
+                print_error "Invalid choice. Cancelling installation."
+                exit 1
+                ;;
+        esac
     else
         print_success "All required commands are installed."
     fi
