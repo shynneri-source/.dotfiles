@@ -1,24 +1,16 @@
--- lua/config/options.lua
+local opt = vim.opt
 
--- VERY IMPORTANT: Leader key definition must be at the top
-vim.g.mapleader = ' '
-vim.g.localleader = ' '
-
--- Other settings
-vim.opt.termguicolors = true
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.expandtab = true
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.smartindent = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.wrap = false
-vim.opt.scrolloff = 8
-vim.opt.sidescrolloff = 8
-vim.opt.mouse = 'a'
-vim.opt.clipboard = 'unnamedplus'
-vim.opt.completeopt = 'menuone,noselect'
-vim.opt.hidden = true  -- Keep buffers loaded when switching
+opt.relativenumber = true
+opt.number = true
+opt.tabstop = 4
+opt.shiftwidth = 4
+opt.expandtab = true
+opt.autoindent = true
+opt.wrap = false
+opt.ignorecase = true
+opt.smartcase = true
+opt.cursorline = true
+opt.termguicolors = true
+opt.scrolloff = 8 -- Keep 8 lines above/below cursor
+opt.signcolumn = "yes"
+opt.clipboard = "unnamedplus" -- Sync with system clipboard

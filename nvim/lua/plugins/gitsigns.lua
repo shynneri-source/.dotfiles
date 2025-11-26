@@ -1,61 +1,23 @@
--- lua/plugins/gitsigns.lua
-
 return {
 	"lewis6991/gitsigns.nvim",
-	-- Load plugin when opening code file
-	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		require("gitsigns").setup({
-			-- Configure display symbols
-			signs = {
-				add = { text = "│" },
-				change = { text = "│" },
-				delete = { text = "_" },
-				topdelete = { text = "‾" },
-				changedelete = { text = "~" },
-				untracked = { text = "┆" },
+			current_line_blame = true, -- Shows "Who wrote this code?" ghost text
+			current_line_blame_opts = {
+				delay = 500, -- Delay before showing the blame
 			},
+			on_attach = function(bufnr)
+				local gs = package.loaded.gitsigns
+				local function map(mode, l, r, desc)
+					vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
+				end
 
-			-- Other customizations
-			current_line_blame = false, -- Disable inline blame to reduce clutter
-			signcolumn = true,
+				-- Keymaps for Git
+				map("n", "]c", gs.next_hunk, "Next Git Change")
+				map("n", "[c", gs.prev_hunk, "Previous Git Change")
+				map("n", "<leader>gp", gs.preview_hunk, "Preview Git Change")
+				map("n", "<leader>gb", gs.toggle_current_line_blame, "Toggle Git Blame")
+			end,
 		})
-
-		-- =======================================================
-		-- CUSTOM KEYMAPS FOR GITSIGNS
-		-- =======================================================
-		local gs = package.loaded.gitsigns
-
-		vim.keymap.set("n", "]c", function()
-			if vim.wo.diff then
-				return "]c"
-			end
-			vim.schedule(function()
-				gs.next_hunk()
-			end)
-			return "<Ignore>"
-		end, { expr = true, desc = "Go to next hunk" })
-
-		vim.keymap.set("n", "[c", function()
-			if vim.wo.diff then
-				return "[c"
-			end
-			vim.schedule(function()
-				gs.prev_hunk()
-			end)
-			return "<Ignore>"
-		end, { expr = true, desc = "Go to previous hunk" })
-
-		-- Actions
-		vim.keymap.set({ "n", "v" }, "<leader>gs", gs.stage_hunk, { desc = "Stage hunk" })
-		vim.keymap.set({ "n", "v" }, "<leader>gr", gs.reset_hunk, { desc = "Reset hunk" })
-		vim.keymap.set("n", "<leader>gS", gs.stage_buffer, { desc = "Stage entire buffer" })
-		vim.keymap.set("n", "<leader>gu", gs.undo_stage_hunk, { desc = "Undo stage hunk" })
-		vim.keymap.set("n", "<leader>gR", gs.reset_buffer, { desc = "Reset entire buffer" })
-		vim.keymap.set("n", "<leader>gp", gs.preview_hunk, { desc = "Preview hunk" })
-		vim.keymap.set("n", "<leader>gb", function()
-			gs.blame_line({ full = true })
-		end, { desc = "Blame line" })
-		vim.keymap.set("n", "<leader>gd", gs.diffthis, { desc = "Diff this" })
 	end,
 }

@@ -1,36 +1,20 @@
--- lua/plugins/treesitter.lua
-
 return {
   "nvim-treesitter/nvim-treesitter",
-  -- `build` will run :TSUpdate command to install/update parsers
   build = ":TSUpdate",
   config = function()
     require("nvim-treesitter.configs").setup({
-      -- List of languages you want Treesitter to support.
-      -- Treesitter will automatically download and compile "parser" for these languages.
-      ensure_installed = {
-        "c",
-        "cpp",
-        "go",
-        "lua", -- Important for Neovim configuration
-        "python",
-        "vim", -- Support for .vim files
-        "vimdoc", -- Support for vim help files
-        "query", -- Treesitter's own query language
+      -- A list of parser names, or "all"
+      ensure_installed = { 
+        "c", "cpp", "rust", "go", "python", "javascript", "typescript", 
+        "markdown", "markdown_inline", "lua", "vim", "vimdoc" 
       },
-
-      -- Auto-install parser for new languages when you open files
-      auto_install = true,
-
-      -- Enable highlight module. This is the main feature!
+      sync_install = false,
+      auto_install = true, -- Automatically install missing parsers when entering buffer
       highlight = {
         enable = true,
+        additional_vim_regex_highlighting = false,
       },
-
-      -- Enable indent module for smarter indentation
-      indent = {
-        enable = true,
-      },
+      indent = { enable = true }, 
     })
   end,
 }

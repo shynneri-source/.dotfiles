@@ -1,88 +1,40 @@
--- lua/plugins/dashboard.lua
-
 return {
-	"goolord/alpha-nvim",
-	event = "VimEnter",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
-	config = function()
-		local alpha = require("alpha")
+    "goolord/alpha-nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+        local dashboard = require("alpha.themes.dashboard")
 
-		-- =======================================================
-		-- SECTION 1: HEADER "SHYNNERI"
-		-- =======================================================
-		local function escape_ascii(lines)
-			local escaped_lines = {}
-			for _, line in ipairs(lines) do
-				table.insert(escaped_lines, (string.gsub(line, "\\", "\\\\")))
-			end
-			return escaped_lines
-		end
+        -- 1. HEADER
+        dashboard.section.header.val = {
+            [[                                                                                ]],
+            [[           ▄▄                                                             ██    ]],
+            [[           ██                                                             ▀▀    ]],
+            [[ ▄▄█████▄  ██▄████▄  ▀██  ███  ██▄████▄  ██▄████▄   ▄████▄    ██▄████   ████    ]],
+            [[ ██▄▄▄▄ ▀  ██▀   ██   ██▄ ██   ██▀   ██  ██▀   ██  ██▄▄▄▄██   ██▀         ██    ]],
+            [[  ▀▀▀▀██▄  ██    ██    ████▀   ██    ██  ██    ██  ██▀▀▀▀▀▀   ██          ██    ]],
+            [[ █▄▄▄▄▄██  ██    ██     ███    ██    ██  ██    ██  ▀██▄▄▄▄█   ██       ▄▄▄██▄▄▄ ]],
+            [[  ▀▀▀▀▀▀   ▀▀    ▀▀     ██     ▀▀    ▀▀  ▀▀    ▀▀    ▀▀▀▀▀    ▀▀       ▀▀▀▀▀▀▀▀ ]],
+            [[                      ███                                                       ]],
+            [[                                                                                ]],
 
-		local ascii_art = {
-			[[                                                                                ]],
-			[[           ▄▄                                                             ██    ]],
-			[[           ██                                                             ▀▀    ]],
-			[[ ▄▄█████▄  ██▄████▄  ▀██  ███  ██▄████▄  ██▄████▄   ▄████▄    ██▄████   ████    ]],
-			[[ ██▄▄▄▄ ▀  ██▀   ██   ██▄ ██   ██▀   ██  ██▀   ██  ██▄▄▄▄██   ██▀         ██    ]],
-			[[  ▀▀▀▀██▄  ██    ██    ████▀   ██    ██  ██    ██  ██▀▀▀▀▀▀   ██          ██    ]],
-			[[ █▄▄▄▄▄██  ██    ██     ███    ██    ██  ██    ██  ▀██▄▄▄▄█   ██       ▄▄▄██▄▄▄ ]],
-			[[  ▀▀▀▀▀▀   ▀▀    ▀▀     ██     ▀▀    ▀▀  ▀▀    ▀▀    ▀▀▀▀▀    ▀▀       ▀▀▀▀▀▀▀▀ ]],
-			[[                      ███                                                       ]],
-			[[                                                                                ]],
-		}
+        }
 
-		local header = {
-			type = "text",
-			val = escape_ascii(ascii_art),
-			opts = { hl = "String", position = "center" },
-		}
+        -- 2. BUTTONS
+        dashboard.section.buttons.val = {
+            dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
+            dashboard.button("r", "  Recent Files", ":Telescope oldfiles<CR>"),
+            dashboard.button("g", "  Find Text", ":Telescope live_grep<CR>"),
+            dashboard.button("e", "  New File", ":ene <BAR> startinsert <CR>"),
+            dashboard.button("c", "  Config", ":e $MYVIMRC <CR>"),
+            dashboard.button("q", "  Quit", ":qa<CR>"),
+        }
 
-		-- =======================================================
-		-- SECTION 2: CUSTOMIZE MENU
-		-- =======================================================
-		local dashboard = require("alpha.themes.dashboard")
+        -- 3. FOOTER
+        local version = vim.version()
+        local nvim_version_info = "   v" .. version.major .. "." .. version.minor .. "." .. version.patch
+        dashboard.section.footer.val = nvim_version_info
 
-		dashboard.section.buttons.val = {
-			dashboard.button("n", "  " .. string.format("%-20s", "New file"), "<cmd>enew<CR>"),
-			dashboard.button("f", "  " .. string.format("%-20s", "Find file"), "<cmd>Telescope find_files<CR>"),
-			dashboard.button("g", "  " .. string.format("%-20s", "Find text"), "<cmd>Telescope live_grep<CR>"),
-			dashboard.button("r", "  " .. string.format("%-20s", "Recent files"), "<cmd>Telescope oldfiles<CR>"),
-			dashboard.button("l", "  " .. string.format("%-20s", "Lazy"), "<cmd>Lazy<CR>"),
-			dashboard.button("q", "  " .. string.format("%-20s", "Quit"), "<cmd>qa<CR>"),
-		}
-
-		-- =======================================================
-		-- SECTION 3: LAYOUT ARRANGEMENT
-		-- =======================================================
-		dashboard.section.header = header
-		dashboard.section.footer.val = "Made by shynn with <3 and Lua"
-
-		-- Arrange layout as desired
-		dashboard.layout = {
-			{ type = "padding", val = 2 },
-			dashboard.section.header,
-			{ type = "padding", val = 2 },
-			dashboard.section.buttons,
-			{ type = "padding", val = 2 },
-			dashboard.section.footer,
-		}
-
-		alpha.setup(dashboard)
-
-		-- =======================================================
-		-- SECTION 4: HIDE UNNECESSARY UI
-		-- =======================================================
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "AlphaReady",
-			callback = function()
-				vim.cmd("set showtabline=0 | set laststatus=0 | set noruler")
-			end,
-		})
-		vim.api.nvim_create_autocmd("BufUnload", {
-			pattern = "alpha",
-			callback = function()
-				vim.cmd("set showtabline=2 | set laststatus=3 | set ruler")
-			end,
-		})
-	end,
+        -- 4. SETUP
+        require("alpha").setup(dashboard.config)
+    end,
 }

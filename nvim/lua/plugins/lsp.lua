@@ -1,99 +1,70 @@
--- lua/plugins/lsp.lua
-
 return {
-	-- nvim-cmp and its dependencies
-	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"L3MON4D3/LuaSnip",
-			"saadparwaiz1/cmp_luasnip",
-		},
-		config = function()
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
-					{ name = "buffer" },
-					{ name = "path" },
-				}),
-				mapping = cmp.mapping.preset.insert({
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-n>"] = cmp.mapping.select_next_item(),
-					["<C-p>"] = cmp.mapping.select_prev_item(),
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if luasnip.expand_or_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-				}),
-			})
-		end,
-	},
-	{ "L3MON4D3/LuaSnip" },
-	{ "saadparwaiz1/cmp_luasnip" },
+    "neovim/nvim-lspconfig",
+    dependencies = {
+        "williamboman/mason.nvim",
+        "williamboman/mason-lspconfig.nvim",
+        "hrsh7th/cmp-nvim-lsp",
+    },
+    config = function()
+        -- 1. Setup Mason (Installs the binaries)
+        require("mason").setup()
+        require("mason-lspconfig").setup({
+            ensure_installed = {
+                "clangd",
+                "rust_analyzer",
+                "gopls",
+                "pyright",
+                "ts_ls",
+                "marksman",
+                "lua_ls",
+            },
+            automatic_installation = true,
+        })
 
-	-- nvim-lspconfig
-	{
-		"neovim/nvim-lspconfig",
-		dependencies = {
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"hrsh7th/nvim-cmp",
-		},
-		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+        -- 2. Global Keymaps (The New "on_attach")
+        vim.api.nvim_create_autocmd("LspAttach", {
+            desc = "LSP actions",
+            callback = function(event)
+                local opts = { buffer = event.buf }
 
-			local on_attach = function(client, bufnr)
-				vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "[G]oto [D]efinition" })
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, desc = "Hover Documentation" })
-				vim.keymap.set(
-					{ "n", "v" },
-					"<leader>ca",
-					vim.lsp.buf.code_action,
-					{ buffer = bufnr, desc = "[C]ode [A]ction" }
-				)
-			end
+                vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+                vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+                vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+                vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+                vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
+            end,
+        })
 
-			-- Setup all installed servers using the new vim.lsp.config API
-			local mason_lspconfig = require("mason-lspconfig")
-			local installed_servers = mason_lspconfig.get_installed_servers()
+        -- 3. Enable Servers (The New "vim.lsp.enable")
+        local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			for _, server_name in ipairs(installed_servers) do
-				if server_name == "lua_ls" then
-					vim.lsp.config(server_name, {
-						on_attach = on_attach,
-						capabilities = capabilities,
-						settings = { Lua = { diagnostics = { globals = { "vim" } } } },
-					})
-				else
-					vim.lsp.config(server_name, {
-						on_attach = on_attach,
-						capabilities = capabilities,
-					})
-				end
-				vim.lsp.enable(server_name)
-			end
-		end,
-	},
+        -- List of servers to enable
+        local servers = { "clangd", "rust_analyzer", "gopls", "pyright", "ts_ls", "marksman", "lua_ls" }
+
+        for _, server in ipairs(servers) do
+            -- Apply capabilities (autocomplete) to the server config
+            -- In 0.11, we patch the config BEFORE enabling
+            local config = { capabilities = capabilities }
+
+            -- Specific Fix: C++ (clangd) needs utf-16 encoding
+            if server == "clangd" then
+                config.capabilities.offsetEncoding = { "utf-16" }
+            end
+
+            -- Specific Fix: Lua needs global 'vim'
+            if server == "lua_ls" then
+                config.settings = { Lua = { diagnostics = { globals = { "vim" } } } }
+            end
+
+            -- 4. Apply Config & Enable
+            -- This uses the new Native 0.11 API, bypassing the deprecated 'framework'
+            if vim.lsp.config then
+                vim.lsp.config(server, config)
+                vim.lsp.enable(server)
+            else
+                -- Fallback for slightly older nightly builds, just in case
+                require("lspconfig")[server].setup(config)
+            end
+        end
+    end,
 }

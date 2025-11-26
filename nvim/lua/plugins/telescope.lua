@@ -1,11 +1,8 @@
--- lua/plugins/telescope.lua
-
 return {
 	"nvim-telescope/telescope.nvim",
-	tag = "0.1.6",
+	tag = "0.1.8",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
-		-- Extension to speed up sorting, highly recommended
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	},
 	config = function()
@@ -14,29 +11,33 @@ return {
 
 		telescope.setup({
 			defaults = {
-				-- Don't close Telescope window when in Insert mode
-				-- allows you to edit search content
 				path_display = { "truncate" },
 				mappings = {
 					i = {
-						["<C-k>"] = actions.move_selection_previous, -- move up
-						["<C-j>"] = actions.move_selection_next, -- move down
-						["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+						["<C-k>"] = actions.move_selection_previous,
+						["<C-j>"] = actions.move_selection_next,
+						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 					},
+				},
+			},
+			extensions = {
+				fzf = {
+					fuzzy = true,
+					override_generic_sorter = true,
+					override_file_sorter = true,
+					case_mode = "smart_case",
 				},
 			},
 		})
 
-		-- Load fzf-native extension to speed up
+		-- Enable the FZF extension
 		telescope.load_extension("fzf")
 
-		-- =======================================================
-		-- KEYMAPS - This is the most important part
-		-- =======================================================
+		-- Set Keybinds
 		local builtin = require("telescope.builtin")
-		vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find file" })
-		vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find text (grep)" })
-		vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Find buffer" })
-		vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find in help" })
+		vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
+		vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find Text" })
+		vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Find Buffers" })
+		vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find Help" })
 	end,
 }
