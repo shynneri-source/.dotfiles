@@ -1,7 +1,7 @@
 # Base Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="robbyrussell"  # Simple default theme
+ZSH_THEME="robbyrussell" 
 
 plugins=(
   git                     # Git aliases and completions
@@ -31,9 +31,6 @@ fi
 if [ -f ~/.fzf.zsh ]; then
   source ~/.fzf.zsh
 fi
-
-# Minimal prompt customization
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
 
 # Increase history size and enable append mode
 HISTSIZE=10000
