@@ -19,5 +19,5 @@ map("n", "<C-l>", "<C-w>l", opts)
 map("n", "<Esc>", ":nohl<CR>", opts)
 
 -- === Customize keymaping ===
-map("n", "1", "0", opts)
-map("n", "0", "$", opts)
+map({ "n", "v" }, "1", "0", opts)
+map({ "n", "v" }, "0", "$", opts)
