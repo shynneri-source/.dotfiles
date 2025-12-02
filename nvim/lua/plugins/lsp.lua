@@ -20,7 +20,7 @@ return {
             automatic_installation = true,
         })
 
-        -- 2. Global Keymaps
+        -- 2. Global Keymaps (LspAttach)
         vim.api.nvim_create_autocmd("LspAttach", {
             desc = "LSP actions",
             callback = function(event)
@@ -32,6 +32,7 @@ return {
                 vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
                 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
 
+                -- Enable Inlay Hints if available (e.g. for Basedpyright/Rust)
                 local client = vim.lsp.get_client_by_id(event.data.client_id)
                 if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
                     vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
@@ -39,14 +40,15 @@ return {
             end,
         })
 
-        -- 3. Enable Servers
         local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+        -- Define your servers
         local servers = { "clangd", "rust_analyzer", "gopls", "basedpyright", "marksman", "lua_ls" }
 
         for _, server in ipairs(servers) do
             local config = { capabilities = capabilities }
 
+            -- Server-specific settings
             if server == "clangd" then
                 config.capabilities.offsetEncoding = { "utf-16" }
             end
@@ -59,20 +61,16 @@ return {
                 config.settings = {
                     basedpyright = {
                         analysis = {
-                            typeCheckingMode = "standard", -- Options: off, basic, standard, strict, all
+                            typeCheckingMode = "standard",
                             autoSearchPaths = true,
-                            useLibraryCodeForTypes = true,
                             diagnosticMode = "openFilesOnly",
                         },
                     },
                 }
             end
 
-            if vim.lsp.config then
-                require("lspconfig")[server].setup(config)
-            else
-                require("lspconfig")[server].setup(config)
-            end
+            vim.lsp.config[server] = config
+            vim.lsp.enable(server)
         end
     end,
 }
