@@ -1,16 +1,24 @@
 local opt = vim.opt
 
-opt.relativenumber = true
+-- UI
 opt.number = true
-opt.tabstop = 4
-opt.shiftwidth = 4
-opt.expandtab = true
-opt.autoindent = true
+opt.relativenumber = true
+opt.cursorline = true
 opt.wrap = false
+opt.signcolumn = "yes"
+opt.termguicolors = true
+opt.scrolloff = 8 -- keep space above and below cursor
+
+-- Search
 opt.ignorecase = true
 opt.smartcase = true
-opt.cursorline = true
-opt.termguicolors = true
-opt.scrolloff = 8 -- Keep 8 lines above/below cursor
-opt.signcolumn = "yes"
-opt.clipboard = "unnamedplus" -- Sync with system clipboard
+
+-- Behavior
+opt.clipboard = "unnamedplus" -- sync with system clipboard
+opt.mouse = "a" -- allow mouse (optional but useful)
+opt.splitright = true
+opt.splitbelow = true
+
+-- Let neovim handle indentation automatically per language (Python etc.)
+opt.autoindent = true
+vim.cmd("filetype plugin indent on")
