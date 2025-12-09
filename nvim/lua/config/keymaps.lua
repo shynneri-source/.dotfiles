@@ -18,3 +18,13 @@ map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 -- Custom mappings
 map({ "n", "v" }, "1", "0", opts)
 map({ "n", "v" }, "0", "$", opts)
+
+-- Open terminal
+vim.keymap.set('n', 'ter', function()
+  vim.cmd('setlocal bufhidden=hide')
+  vim.cmd('terminal')
+  vim.cmd('startinsert')
+end, { noremap = true, silent = true })
+
+-- ESC to escape terminal mode 
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
