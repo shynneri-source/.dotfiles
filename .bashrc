@@ -1,5 +1,9 @@
 # ~/.bashrc
 
+if [[ "$TERM" == "xterm-kitty" ]] || [[ -n "$KITTY_PID" ]]; then
+    export TERM=xterm-256color
+    export COLORTERM=truecolor
+fi
 # Case-insensitive completion (typing 'cd doc' matches 'Documents')
 bind "set completion-ignore-case on"
 bind "set show-all-if-ambiguous on"
@@ -14,17 +18,10 @@ plugins=(
 )
 source "$OSH/oh-my-bash.sh"
 
-# Zoxide (Smart CD)
-eval "$(zoxide init bash)"
-alias cd='z'
-
 # Eza (Better LS)
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -al --icons --group-directories-first --git'
 alias lt='eza --tree --level=2 --icons'
-
-# Bat (Better Cat)
-alias cat='bat --style=plain'
 
 [[ -f ~/.local/share/blesh/ble.sh ]] && source ~/.local/share/blesh/ble.sh
 
