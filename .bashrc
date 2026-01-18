@@ -28,7 +28,8 @@ alias lt='eza --tree --level=2 --icons'
 . "$HOME/.cargo/env"
 
 . "$HOME/.local/bin/env"
-
+export VISUAL=nvim
+export EDITOR=nvim
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
