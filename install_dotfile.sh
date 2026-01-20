@@ -62,6 +62,9 @@ link_file "$DOTFILES_DIR/kitty" "$HOME/.config/kitty" "Kitty"
 # Bashrc
 link_file "$DOTFILES_DIR/.bashrc" "$HOME/.bashrc" ".bashrc"
 
+# Ble.sh Config (Added)
+link_file "$DOTFILES_DIR/.blerc" "$HOME/.blerc" ".blerc"
+
 echo "------------------------------------------------"
 echo "✅ Installation Complete!"
 echo "------------------------------------------------"
