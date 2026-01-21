@@ -21,7 +21,6 @@ return {
 
             -- 2. Define the servers we want to ensure are installed
             local servers = {
-                bashls = {},
                 clangd = {},
                 gopls = {},
                 lua_ls = {

@@ -9,6 +9,7 @@ sudo pacman -S pamixer
 systemctl --user enable --now pipewire pipewire-pulse wireplumber
 sudo pacman -S hyprlock
 sudo pacman -S hyprpaper
+sudo pacman -S fcitx5 fcitx5-gtk fcitx5-qt fcitx5-configtool fcitx5-unikey
 
 #terminal
 sudo pacman -S kitty
