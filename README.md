@@ -60,7 +60,7 @@ For other distributions, adjust the package manager command accordingly.
 
 ```bash
 # Clone the repository
-git clone https://github.com/shyn/dotfiles.git ~/.dotfiles
+git clone https://github.com/shynneri-source/dotfiles.git ~/.dotfiles
 
 # Navigate to the directory
 cd ~/.dotfiles
