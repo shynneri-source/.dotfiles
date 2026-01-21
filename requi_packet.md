@@ -1,10 +1,14 @@
 # Base packet
-sudo pacman -S git curl fzf bash-completion eza
-git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git
-make -C ble.sh install PREFIX=~/.local
-rm -rf ble.sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+sudo pacman -S git curl fzf zsh starship eza unzip
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 sudo pacman -S python-pip base-devel fastfetch wget
+sudo pacman -S brightnessctl wireplumber network-manager-applet
+sudo pacman -S pamixer
+systemctl --user enable --now pipewire pipewire-pulse wireplumber
+sudo pacman -S hyprlock
+sudo pacman -S hyprpaper
 
 #terminal
 sudo pacman -S kitty
@@ -22,9 +26,6 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # nvim
 sudo pacman -S nvim
-
-# markdown render
-sudo pacman -S glow
 
 # tui
 sudo pacman -S bottom #btm
