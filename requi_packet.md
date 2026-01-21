@@ -30,3 +30,11 @@ sudo pacman -S nvim
 # tui
 sudo pacman -S bottom #btm
 
+cat << 'EOF' | tee -a ~/.bashrc ~/.zshrc
+
+
+# Fix for 'xterm-kitty' unknown terminal type
+if [[ "$TERM" == "xterm-kitty" ]]; then
+    export TERM=xterm-256color
+fi
+EOF
