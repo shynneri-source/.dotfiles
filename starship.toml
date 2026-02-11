@@ -1,0 +1,82 @@
+# 1. Layout: Put everything on Line 1, Arrow on Line 2
+format = """
+$os$hostname$directory$git_branch$git_status$c$golang$rust$python$nodejs$docker
+$character"""
+
+# Move time to the right
+right_format = """$cmd_duration$time"""
+
+# 2. Global Settings (The Fixes)
+add_newline = false      # STOP adding empty lines between commands
+command_timeout = 1000
+
+# 3. Modules (Compact Styles)
+[os]
+disabled = false
+format = "[$symbol]($style)" # Removed space after symbol
+style = "bold white"
+
+[os.symbols]
+Arch = " "
+
+[directory]
+style = "bold blue"
+truncation_length = 3
+truncation_symbol = "…/"
+format = "[$path]($style)[$read_only]($style) "
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = "[$all_status$ahead_behind]($style) "
+
+# --- Languages (Now Cleaner & on Line 1) ---
+# I removed "via " text to save space
+
+[c]
+symbol = " "
+style = "bold blue"
+format = "[$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+style = "bold cyan"
+format = "[$symbol($version )]($style)"
+
+[rust]
+symbol = " "
+style = "bold red"
+format = "[$symbol($version )]($style)"
+
+[python]
+symbol = " "
+style = "bold yellow"
+format = "[${symbol}${pyenv_prefix}(${version} )($virtualenv )]($style)"
+
+# --- Info ---
+
+[cmd_duration]
+min_time = 2000
+style = "bold yellow"
+format = "[$duration]($style) "
+
+[time]
+disabled = false
+style = "bold grey"
+format = "[$time]($style)"
+time_format = "%R"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+vicmd_symbol = "[❮](bold green)"
+
+[hostname]
+ssh_only = false
+format = "[$ssh_symbol$hostname]($style) "
+style = "bold dimmed white"
+disabled = false

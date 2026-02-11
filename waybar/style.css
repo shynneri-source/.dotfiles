@@ -1,0 +1,77 @@
+* {
+border: none;
+border-radius: 0;
+font-family: "IosevkaTerm Nerd Font", "IosevkaTerm NF", "Symbols Nerd Font", monospace;
+font-weight: bold;
+font-size: 12px;
+min-height: 0;
+}
+
+/* THE 20px BAR */
+window#waybar {
+background: rgba(30, 30, 46, 0.95);
+color: #cdd6f4;
+border-bottom: 1px solid #45475a;
+}
+
+tooltip {
+background: #1e1e2e;
+border: 1px solid #45475a;
+}
+tooltip label { color: #cdd6f4; }
+
+/* -----------------------------------------------------
+MODULES
+----------------------------------------------------- */
+
+#workspaces button {
+padding: 0 3px; /* Tight padding */
+background: transparent;
+color: #6c7086;
+border-bottom: 2px solid transparent;
+}
+
+#workspaces button.active {
+color: #ffffff;
+background: #313244;
+border-bottom: 2px solid #89b4fa;
+}
+
+#workspaces button:hover {
+background: #313244;
+color: #ffffff;
+}
+
+#window {
+color: #a6adc8;
+padding: 0 6px;
+}
+
+/* Right Side Modules */
+#clock,
+#cpu,
+#memory,
+#network,
+#tray,
+#pulseaudio,
+#backlight {
+padding: 0 6px;
+margin: 1px 2px; /* Very small vertical margin to fit 20px */
+background-color: #313244;
+border: 1px solid #45475a;
+color: #cdd6f4;
+}
+
+/* Interactive Modules Highlight */
+#pulseaudio, #backlight {
+background-color: #45475a;
+color: #ffffff;
+}
+
+/* Alerts */
+#pulseaudio.muted {
+background-color: #313244;
+color: #6c7086;
+text-decoration: line-through;
+}
+#network.disconnected { color: #f38ba8; }
