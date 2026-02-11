@@ -5,41 +5,50 @@
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
+    "height": 26,
 
-    "height": 20,
     "modules-left": [
-        "clock",
         "hyprland/workspaces"
     ],
     "modules-center": [
+        "clock", // Moved clock to center for better balance
         "hyprland/window"
     ],
     "modules-right": [
         "network",
         "cpu",
         "memory",
-        "backlight",
-        "pulseaudio",
+        "group/audio-light", // Grouped for cleaner look
         "tray"
     ],
 
     "hyprland/window": {
-        "format": "[ {} ]"
+        "format": " //  {}",
+        "max-length": 50, // Truncate long titles to keep focus
+        "separate-outputs": true
     },
 
     "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "on-click": "activate",
-        "format": "{name}",
+        "format": "{name}", // Simple numbers are cleaner
         "persistent_workspaces": {
             "1": [], "2": [], "3": [], "4": []
         }
     },
 
+    "group/audio-light": {
+        "orientation": "horizontal",
+        "modules": [
+            "pulseaudio",
+            "backlight"
+        ]
+    },
+
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-muted": "󰖁 Muted",
+        "format-muted": "󰖁",
         "on-click": "pamixer -t",
         "on-click-right": "pavucontrol",
         "on-scroll-up": "pamixer -i 5",
@@ -64,9 +73,9 @@
     },
 
     "network": {
-        "format-wifi": "  {signalStrength}%",
-        "format-ethernet": "󰈀 ETH",
-        "format-disconnected": "󰤮 OFF",
+        "format-wifi": " ",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "󰤮",
         "tooltip-format": "{essid} ({ifname}) via {gwaddr}",
         "on-click": "nm-connection-editor"
     },
@@ -82,12 +91,12 @@
     },
 
     "clock": {
-        "format": " {:%H:%M  %Y-%m-%d}",
+        "format": "{:%H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "tray": {
-        "icon-size": 13,
+        "icon-size": 14,
         "spacing": 10
     }
 }

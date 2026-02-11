@@ -1,77 +1,128 @@
 * {
-border: none;
-border-radius: 0;
-font-family: "IosevkaTerm Nerd Font", "IosevkaTerm NF", "Symbols Nerd Font", monospace;
-font-weight: bold;
-font-size: 12px;
-min-height: 0;
+    border: none;
+    border-radius: 0;
+    font-family: "IosevkaTerm Nerd Font", "IosevkaTerm NF", "Symbols Nerd Font", monospace;
+    font-weight: bold;
+    font-size: 13px;
+    min-height: 0;
 }
-
-/* THE 20px BAR */
-window#waybar {
-background: rgba(30, 30, 46, 0.95);
-color: #cdd6f4;
-border-bottom: 1px solid #45475a;
-}
-
-tooltip {
-background: #1e1e2e;
-border: 1px solid #45475a;
-}
-tooltip label { color: #cdd6f4; }
 
 /* -----------------------------------------------------
-MODULES
------------------------------------------------------ */
+   Main Bar - Transparent & Thin
+   ----------------------------------------------------- */
+window#waybar {
+    background: transparent; /* No heavy bar background */
+    background-color: rgba(30, 30, 46, 0.2);
+    color: #cdd6f4;
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+/* -----------------------------------------------------
+   Workspaces - Floating Pills
+   ----------------------------------------------------- */
+#workspaces {
+    background: transparent;
+    margin: 2px 5px;
+}
 
 #workspaces button {
-padding: 0 3px; /* Tight padding */
-background: transparent;
-color: #6c7086;
-border-bottom: 2px solid transparent;
+    padding: 0 5px;
+    margin: 0 2px;
+    border-radius: 10px; /* Rounded pills */
+    background: transparent;
+    color: #b4befe; /* Passive Lavender */
+    transition: all 0.3s ease;
 }
 
 #workspaces button.active {
-color: #ffffff;
-background: #313244;
-border-bottom: 2px solid #89b4fa;
+    background: #cba6f7; /* Active Mauve */
+    color: #1e1e2e; /* Dark text on active */
+    min-width: 30px; /* Expands slightly when active */
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
 }
 
 #workspaces button:hover {
-background: #313244;
-color: #ffffff;
+    background: #f5c2e7; /* Pink hover */
+    color: #1e1e2e;
 }
 
+/* -----------------------------------------------------
+   Window Title - Ghost Mode
+   ----------------------------------------------------- */
 #window {
-color: #a6adc8;
-padding: 0 6px;
+    color: #a6adc8;
+    opacity: 0.6; /* See-through to stay chill */
+    padding: 0 10px;
+    font-weight: normal;
 }
 
-/* Right Side Modules */
+/* -----------------------------------------------------
+   Modules (Right Side)
+   ----------------------------------------------------- */
+
+/* Common style for the "Islands" */
 #clock,
 #cpu,
 #memory,
 #network,
-#tray,
 #pulseaudio,
-#backlight {
-padding: 0 6px;
-margin: 1px 2px; /* Very small vertical margin to fit 20px */
-background-color: #313244;
-border: 1px solid #45475a;
-color: #cdd6f4;
+#backlight,
+#tray {
+    padding: 0 10px;
+    margin: 4px 2px;
+    background-color: rgba(30, 30, 46, 0.4); /* Glassy background */
+    color: #cdd6f4;
+    border-radius: 12px;
 }
 
-/* Interactive Modules Highlight */
-#pulseaudio, #backlight {
-background-color: #45475a;
-color: #ffffff;
+/* Specific Colors for "Healing" Vibe */
+
+#clock {
+    background-color: transparent;
+    color: #f5c2e7; /* Pink Clock */
+    font-size: 14px;
+    font-weight: 800;
+}
+
+#network {
+    color: #89dceb; /* Sky Blue */
+    background-color: transparent;
+    padding-right: 2px;
+}
+
+#cpu {
+    color: #f9e2af; /* Yellow */
+    background-color: transparent;
+    padding-right: 2px;
+}
+
+#memory {
+    color: #a6e3a1; /* Green */
+    background-color: transparent;
+}
+
+/* The Audio/Light Group */
+#pulseaudio {
+    color: #89b4fa; /* Blue */
+    background-color: transparent;
+    border-radius: 12px 0px 0px 12px;
+    margin-right: 0;
+}
+
+#backlight {
+    color: #fab387; /* Peach */
+    background-color: transparent;
+    border-radius: 0px 12px 12px 0px;
+    margin-left: 0;
+}
+
+#tray {
+    background-color: transparent;
 }
 
 /* Alerts */
-#pulseaudio.muted {
-background-color: #313244;
-color: #6c7086;
-text-decoration: line-through;
+#network.disconnected {
+    color: #f38ba8; /* Red */
 }
-#network.disconnected { color: #f38ba8; }

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # ==============================================================================
 # DOTFILES INSTALLATION UTILITY
 #
@@ -34,6 +33,7 @@ ARCH_PACKAGES=(
     "starship"
     "eza"
     "unzip"
+    "fd"
     "python-pip"
     "base-devel"
     "fastfetch"
@@ -42,11 +42,29 @@ ARCH_PACKAGES=(
     "wireplumber"
     "network-manager-applet"
     "pamixer"
+    "pipewire-pulse"
     "hyprlock"
     "hyprpaper"
     "hyprland"
     "hypridle"
     "waybar"
+    "fcitx5"
+    "fcitx5-gtk"
+    "fcitx5-qt"
+    "fcitx5-configtool"
+    "fcitx5-unikey"
+    "docker"
+    "docker-compose"
+    "docker-buildx"
+    "imagemagick"
+    "luarocks"
+    "lua51"
+    "python-pipx"
+    "wl-clipboard"
+    "hyprshot"
+    "hyprpolkitagent"
+    "npm"
+    "keyd"
     "kitty"
     "ttf-iosevkaterm-nerd"
     "ttf-jetbrains-mono-nerd"
@@ -202,6 +220,53 @@ if [[ "$IS_ARCH" == "true" ]]; then
     log_info "Enabling Pipewire services..."
     systemctl --user enable --now pipewire pipewire-pulse wireplumber
     log_success "Pipewire services enabled and started."
+
+    # Setup pipx
+    log_info "Configuring pipx..."
+    pipx ensurepath
+    log_success "pipx path configured."
+
+    # Setup npm global directory
+    if [[ ! -d "$HOME/.npm-global" ]]; then
+        log_info "Configuring npm global directory..."
+        mkdir -p "$HOME/.npm-global"
+        npm config set prefix "$HOME/.npm-global"
+        log_success "npm global directory configured at ~/.npm-global"
+    else
+        log_info "npm global directory already configured."
+    fi
+
+    # Setup keyd configuration
+    if [[ -f "$DOTFILES_DIR/keyd/default.conf" ]]; then
+        log_info "Linking keyd configuration..."
+        sudo mkdir -p /etc/keyd
+        sudo ln -sf "$DOTFILES_DIR/keyd/default.conf" /etc/keyd/default.conf
+        log_success "keyd configuration linked."
+    fi
+
+    # Enable keyd service
+    log_info "Enabling keyd service..."
+    sudo systemctl enable keyd
+    log_success "keyd service enabled."
+
+    # Add terminal type fix to shell configs
+    log_info "Adding terminal type fix to shell configs..."
+    TERM_FIX="# Fix for 'xterm-kitty' unknown terminal type
+if [[ \"\$TERM\" == \"xterm-kitty\" ]]; then
+    export TERM=xterm-256color
+fi"
+
+    for shell_rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [[ -f "$shell_rc" ]]; then
+            if ! grep -q "Fix for 'xterm-kitty' unknown terminal type" "$shell_rc"; then
+                echo "" >> "$shell_rc"
+                echo "$TERM_FIX" >> "$shell_rc"
+                log_success "Added terminal type fix to $shell_rc"
+            else
+                log_info "Terminal type fix already present in $shell_rc"
+            fi
+        fi
+    done
 
     # Optional: AUR Helper check (yay/paru)
     if command -v yay &> /dev/null; then

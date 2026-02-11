@@ -19,7 +19,7 @@ pipx ensurepath
 sudo pacman -S wl-clipboard
 sudo pacman -S hyprshot
 sudo pacman -S hyprpolkitagent
-
+sudo pacman -S npm
 # terminal
 sudo pacman -S kitty
 
@@ -43,6 +43,10 @@ sudo pacman -S bottom #btm
 # npm global
 mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
+
+# remap keyboard
+sudo pacman -S keyd
+sudo servicectl enable keyd
 
 cat << 'EOF' | tee -a ~/.bashrc ~/.zshrc
 # Fix for 'xterm-kitty' unknown terminal type
